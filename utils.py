@@ -119,3 +119,4 @@ def safe_divide(numerator, denominator, fill_value=0.0):
     else:
         # Handle scalar denominators
         return fill_value if denominator == 0 else numerator / denominator
+

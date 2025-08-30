@@ -9,8 +9,8 @@ import os
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from strategies.strategy_teamname_baseline import Strategy as BaselineStrategy
-from strategies.strategy_teamname_ml import Strategy as MLStrategy
+from strategies.strategy_vasudevjamdagnigaur_baseline import Strategy as BaselineStrategy
+from strategies.strategy_vasudevjamdagnigaur_ml import Strategy as MLStrategy
 from utils import ALLOWED_SIGNALS
 
 def make_sample_df(n=100, seed=42):
@@ -236,3 +236,4 @@ def run_all_tests():
 
 if __name__ == "__main__":
     run_all_tests()
+

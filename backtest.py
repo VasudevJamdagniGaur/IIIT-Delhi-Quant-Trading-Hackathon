@@ -199,3 +199,4 @@ if __name__ == "__main__":
     # Run backtest
     results = backtest_minute_sharpe(sample_df, sample_signals)
     print_backtest_summary(results, "Sample Buy-and-Hold")
+

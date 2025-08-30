@@ -19,7 +19,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import validate_signals, assert_no_network_imports, check_dataframe_format
 
 # Weights file path (relative to strategy file location)
-WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), "..", "weights", "weights_teamname_ml.pkl")
+WEIGHTS_PATH = os.path.join(os.path.dirname(__file__), "..", "weights", "weights_vasudevjamdagnigaur_ml.pkl")
 
 def feature_engineer(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -121,7 +121,7 @@ class Strategy:
     """
     
     def __init__(self):
-        self.name = "TeamQuantIIITD - ML_RandomForest"
+        self.name = "vasudevjamdagnigaur - ML_RandomForest"
         self.description = "RandomForest classifier on engineered features with dynamic thresholds and position tracking."
         
         # Model and preprocessing
@@ -419,3 +419,4 @@ if __name__ == "__main__":
     
     print(f"Generated {len(signals)} signals")
     print(f"Signal distribution: {signals.value_counts().to_dict()}")
+

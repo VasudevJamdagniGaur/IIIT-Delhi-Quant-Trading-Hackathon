@@ -1,6 +1,6 @@
-# Trading Strategy Submission - Team [YOUR_TEAM_NAME]
+# Trading Strategy Submission - Team vasudevjamdagnigaur
 
-**Team Members**: [List your team members here]
+**Team Members**: Vasudev Jamdagni Gaur
 
 **Submission Date**: [Date]
 
@@ -8,10 +8,8 @@
 
 ## Team Name & Members
 
-- **Team Name**: [YOUR_TEAM_NAME]
-- **Member 1**: [Name] - [Role/Contribution]
-- **Member 2**: [Name] - [Role/Contribution]  
-- **Member 3**: [Name] - [Role/Contribution]
+- **Team Name**: vasudevjamdagnigaur
+- **Member 1**: Vasudev Jamdagni Gaur - [Role/Contribution]
 - **Contact**: [Primary contact email]
 
 ---
@@ -19,13 +17,13 @@
 ## List of Strategies Submitted
 
 ### 1. Baseline SMA Crossover Strategy
-- **File**: `strategy_teamname_baseline.py`
+- **File**: `strategy_vasudevjamdagnigaur_baseline.py`
 - **Type**: Rule-based trend following
 - **Description**: Simple Moving Average crossover strategy with adaptive window sizing based on data characteristics and volatility. Uses short-term (10-30 periods) and long-term (60-180 periods) SMAs to generate buy/sell signals when crossovers occur with sufficient trend strength.
 
 ### 2. Machine Learning RandomForest Strategy  
-- **File**: `strategy_teamname_ml.py`
-- **Weights**: `weights_teamname_ml.pkl`
+- **File**: `strategy_vasudevjamdagnigaur_ml.py`
+- **Weights**: `weights_vasudevjamdagnigaur_ml.pkl`
 - **Type**: Supervised machine learning
 - **Description**: RandomForest classifier trained on engineered technical features to predict next-minute price direction. Uses probability thresholds and position tracking to generate trading signals with confidence filtering.
 
@@ -235,10 +233,10 @@ hackathon-trading/
 ## Submission Checklist
 
 **Files to Submit**:
-- [ ] `strategy_teamname_baseline.py`
-- [ ] `strategy_teamname_ml.py` 
-- [ ] `weights_teamname_ml.pkl`
-- [ ] `README_teamname.md` (this file)
+- [ ] `strategy_vasudevjamdagnigaur_baseline.py`
+- [ ] `strategy_vasudevjamdagnigaur_ml.py` 
+- [ ] `weights_vasudevjamdagnigaur_ml.pkl`
+- [ ] `README_vasudevjamdagnigaur.md` (this file)
 
 **Validation Checklist**:
 - [ ] All filenames follow required pattern
@@ -258,3 +256,4 @@ hackathon-trading/
 ---
 
 *This README was generated as part of the hackathon trading strategy development framework. Update all placeholder values with your actual team information and results.*
+

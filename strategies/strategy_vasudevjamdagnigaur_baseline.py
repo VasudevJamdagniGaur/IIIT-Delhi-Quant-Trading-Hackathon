@@ -25,7 +25,7 @@ class Strategy:
     """
     
     def __init__(self):
-        self.name = "TeamQuantIIITD - SMA_Crossover_Baseline"
+        self.name = "vasudevjamdagnigaur - SMA_Crossover_Baseline"
         self.description = "Short/long SMA crossover with adaptive windows; long-only all-in/all-out trend following."
         
         # Default parameters (will be tuned in fit())
@@ -194,3 +194,4 @@ if __name__ == "__main__":
     
     print(f"Generated {len(signals)} signals")
     print(f"Signal distribution: {signals.value_counts().to_dict()}")
+

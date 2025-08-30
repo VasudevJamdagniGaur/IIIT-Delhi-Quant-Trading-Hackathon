@@ -54,8 +54,8 @@ def test_strategy_imports():
     
     try:
         # Import strategies
-        from strategies.strategy_teamname_baseline import Strategy as BaselineStrategy
-        from strategies.strategy_teamname_ml import Strategy as MLStrategy
+        from strategies.strategy_vasudevjamdagnigaur_baseline import Strategy as BaselineStrategy
+        from strategies.strategy_vasudevjamdagnigaur_ml import Strategy as MLStrategy
         
         # Record modules after importing
         modules_after = set(sys.modules.keys())
@@ -152,3 +152,4 @@ def run_network_tests():
 
 if __name__ == "__main__":
     run_network_tests()
+

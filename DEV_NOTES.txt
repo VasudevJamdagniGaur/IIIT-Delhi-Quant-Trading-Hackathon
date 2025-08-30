@@ -46,16 +46,16 @@ python -m pytest tests/ -v -s
 TESTING INDIVIDUAL STRATEGIES
 ------------------------------
 # Test baseline strategy
-python strategies/strategy_teamname_baseline.py
+python strategies/strategy_vasudevjamdagnigaur_baseline.py
 
 # Test ML strategy (requires more data)
-python strategies/strategy_teamname_ml.py
+python strategies/strategy_vasudevjamdagnigaur_ml.py
 
 MANUAL BACKTESTING
 ------------------
 python -c "
 import pandas as pd
-from strategies.strategy_teamname_baseline import Strategy
+from strategies.strategy_vasudevjamdagnigaur_baseline import Strategy
 from backtest import backtest_minute_sharpe, print_backtest_summary
 
 # Load data (replace with your actual data loading)
@@ -123,8 +123,8 @@ PERFORMANCE OPTIMIZATION
 
 SUBMISSION PREPARATION
 ----------------------
-1. Update team name in all strategy files (replace "teamname")
-2. Fill out README_teamname.md with actual team information
+1. Update team name in all strategy files (replace "teamname") ✓ COMPLETED
+2. Fill out README_vasudevjamdagnigaur.md with actual team information
 3. Test final submission with: python -m pytest tests/
 4. Record demonstration video showing:
    - File structure
@@ -167,7 +167,7 @@ results = backtest_minute_sharpe(
 )
 
 # Feature importance analysis (ML strategy)
-from strategies.strategy_teamname_ml import Strategy
+from strategies.strategy_vasudevjamdagnigaur_ml import Strategy
 strategy = Strategy()
 strategy.fit(train_df)
 if hasattr(strategy.model, 'feature_importances_'):
@@ -196,3 +196,4 @@ Remember: The goal is to create strategies that work with the hackathon's exact 
 Focus on robustness and compliance over complex optimization.
 
 Good luck! 🚀
+
