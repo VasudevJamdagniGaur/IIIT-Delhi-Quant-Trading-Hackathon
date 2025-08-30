@@ -11,12 +11,12 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
     """
     Simulate long-only, all-in/all-out trading with minute-level Sharpe calculation.
     
-    Trading Rules (UPDATED):
-    - Signals at time t execute at same bar's close price (Close[t]) - CHANGED FROM Open[t+1]
+    Trading Rules:
+    - UPDATED: Signals at time t execute at same bar's close (Close[t]) - immediate execution
     - Long-only: can only BUY when in cash, SELL when holding position
     - All-in/all-out: use entire cash balance for trades
     - Fees applied on both sides: reduce cash on BUY, reduce proceeds on SELL
-    - Mark-to-market at each bar's close price (same as execution price now)
+    - Mark-to-market at each bar's close price (after potential trade execution)
     
     Args:
         df: DataFrame with OHLCV data, sorted ascending datetime index
@@ -59,14 +59,14 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
     
     for i, timestamp in enumerate(df.index):
         current_bar = df.loc[timestamp]
-        close_price = float(current_bar['close'])  # CHANGED: Get close price first
+        close_price = float(current_bar['close'])
         
-        # CHANGED: Execute signal immediately at current bar's close price (not next bar's open)
+        # UPDATED: Execute current bar's signal immediately at close price (Close[t])
         current_signal = signals.loc[timestamp]
         
         if current_signal == "BUY" and position == 0:
             # Buy all-in: apply fee by reducing available cash
-            # CHANGED: Execute at close_price instead of next bar's open_price
+            # CHANGED: Execute at close price instead of next bar's open
             available_cash = cash * (1 - fee)
             shares = available_cash / close_price
             cash = 0.0
@@ -74,14 +74,14 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
             trades.append({
                 'time': timestamp,
                 'type': 'BUY',
-                'price': close_price,  # CHANGED: Use close_price
+                'price': close_price,  # CHANGED: was open_price from next bar
                 'shares': shares,
                 'fee_paid': available_cash * fee / (1 - fee)
             })
             
         elif current_signal == "SELL" and position == 1:
             # Sell all: apply fee by reducing proceeds
-            # CHANGED: Execute at close_price instead of next bar's open_price
+            # CHANGED: Execute at close price instead of next bar's open
             gross_proceeds = shares * close_price
             cash = gross_proceeds * (1 - fee)
             shares = 0.0
@@ -89,13 +89,13 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
             trades.append({
                 'time': timestamp,
                 'type': 'SELL', 
-                'price': close_price,  # CHANGED: Use close_price
+                'price': close_price,  # CHANGED: was open_price from next bar
                 'shares': shares,
                 'fee_paid': gross_proceeds * fee
             })
         
-        # Mark-to-market at close (same as execution price now)
-        # CHANGED: NAV calculation now reflects immediate execution
+        # Mark-to-market at close (after potential trade execution)
+        # NAV calculation remains the same as trades now execute at close price
         nav = cash + shares * close_price
         navs.append(nav)
     
@@ -187,10 +187,10 @@ if __name__ == "__main__":
     }, index=dates)
     
     # Generate simple buy-and-hold signals
-    # CHANGED: Now executes at same bar's close price, so no lookahead concerns
+    # NOTE: With updated execution logic, BUY executes at Close[0] immediately
     sample_signals = pd.Series(['BUY'] + ['HOLD'] * (len(dates) - 1), index=dates)
     
-    # Run backtest with updated execution logic
+    # Run backtest with updated execution logic (Close[t] instead of Open[t+1])
     results = backtest_minute_sharpe(sample_df, sample_signals)
-    print_backtest_summary(results, "Sample Buy-and-Hold (Close Execution)")
+    print_backtest_summary(results, "Sample Buy-and-Hold (Close[t] Execution)")
 
