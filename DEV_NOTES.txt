@@ -57,6 +57,28 @@ python strategies/strategy_vasudevjamdagnigaur_baseline.py
 # Test ML strategy (requires more data)
 python strategies/strategy_vasudevjamdagnigaur_ml.py
 
+EVALUATOR ENGINE (RANKING & COMPARISON)
+---------------------------------------
+# NEW: Use evaluator.py to rank all strategies by Sharpe ratio
+
+# Step 1: Prepare data in evaluator format (timestamp column, not index)
+python prepare_data.py --input data/train.csv --train-ratio 0.7
+
+# Step 2: Run evaluator on all strategies
+python evaluator.py --train data/train_eval.csv --test data/test_eval.csv --strategies-dir strategies
+
+# This will:
+# - Fit each strategy on train_eval.csv
+# - Generate signals on test_eval.csv  
+# - Backtest with Open[t+1] execution (different from backtest.py!)
+# - Rank by annualized Sharpe ratio
+# - Save detailed results in eval_outputs/
+
+⚠️  IMPORTANT: evaluator.py uses Open[t+1] execution, backtest.py uses Close[t] execution
+- evaluator.py: Signal at t → Execute at Open[t+1] (1-bar delay)
+- backtest.py: Signal at t → Execute at Close[t] (immediate)
+- Results will differ between the two approaches!
+
 MANUAL BACKTESTING
 ------------------
 python -c "
