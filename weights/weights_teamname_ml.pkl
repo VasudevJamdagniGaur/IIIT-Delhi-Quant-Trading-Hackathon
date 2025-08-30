@@ -1,0 +1,3 @@
+# Placeholder weights file for ML strategy
+# This file will be replaced when strategy.fit() is called
+# The actual trained model will be saved here using joblib

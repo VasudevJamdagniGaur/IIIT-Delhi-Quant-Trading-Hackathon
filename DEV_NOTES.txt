@@ -1,0 +1,198 @@
+HACKATHON TRADING STRATEGY DEVELOPMENT NOTES
+============================================
+
+This file contains developer instructions for using the hackathon trading framework.
+
+QUICK START
+-----------
+1. Place your train.csv file in the data/ folder
+2. Open and run main.ipynb for complete analysis
+3. Run tests: python -m pytest tests/ -v
+4. Update README_teamname.md with your team details
+
+PROJECT STRUCTURE
+------------------
+hackathon-trading/
+├── data/
+│   └── train.csv                    # Your training data (OHLCV with datetime index)
+├── strategies/
+│   ├── strategy_teamname_baseline.py  # SMA crossover rule-based strategy
+│   └── strategy_teamname_ml.py        # ML RandomForest strategy
+├── weights/
+│   └── weights_teamname_ml.pkl        # Trained ML model weights
+├── tests/
+│   ├── test_predict_api.py           # API compliance tests
+│   └── test_no_internet.py           # Network restriction tests
+├── exports/                          # Generated results (created when running notebook)
+├── main.ipynb                        # Main development notebook
+├── backtest.py                       # Backtesting engine
+├── utils.py                          # Utility functions
+├── requirements.txt                  # Python dependencies
+├── README_teamname.md               # Submission README template
+└── DEV_NOTES.txt                    # This file
+
+RUNNING TESTS
+-------------
+# Run all tests
+python -m pytest tests/ -v
+
+# Run specific test files
+python -m pytest tests/test_predict_api.py -v
+python -m pytest tests/test_no_internet.py -v
+
+# Run tests with detailed output
+python -m pytest tests/ -v -s
+
+TESTING INDIVIDUAL STRATEGIES
+------------------------------
+# Test baseline strategy
+python strategies/strategy_teamname_baseline.py
+
+# Test ML strategy (requires more data)
+python strategies/strategy_teamname_ml.py
+
+MANUAL BACKTESTING
+------------------
+python -c "
+import pandas as pd
+from strategies.strategy_teamname_baseline import Strategy
+from backtest import backtest_minute_sharpe, print_backtest_summary
+
+# Load data (replace with your actual data loading)
+df = pd.read_csv('data/train.csv', index_col=0, parse_dates=True)
+train_df = df.iloc[:int(0.7*len(df))]
+test_df = df.iloc[int(0.7*len(df)):]
+
+# Run strategy
+strategy = Strategy()
+strategy.fit(train_df)
+signals = strategy.predict(test_df)
+
+# Backtest
+results = backtest_minute_sharpe(test_df, signals)
+print_backtest_summary(results, 'Manual Test')
+"
+
+DATA FORMAT REQUIREMENTS
+-------------------------
+Your train.csv must have:
+- Datetime index (will be parsed automatically)
+- Columns: open, high, low, close, volume
+- Sorted in ascending chronological order
+- No missing values in OHLCV columns
+- Minute-level frequency (or specify your frequency)
+
+Example CSV format:
+timestamp,open,high,low,close,volume
+2023-01-01 09:00:00,100.0,100.5,99.8,100.2,1500
+2023-01-01 09:01:00,100.2,100.7,100.0,100.4,1200
+...
+
+STRATEGY DEVELOPMENT TIPS
+--------------------------
+1. ALWAYS test with sample data first using main.ipynb
+2. Validate signals using utils.validate_signals() before submission
+3. Check that no network modules are imported with utils.assert_no_network_imports()
+4. Set random seeds in fit() method for reproducibility
+5. Use position tracking in predict() for realistic trading simulation
+6. Test edge cases (small datasets, constant prices, etc.)
+
+COMMON ISSUES & SOLUTIONS
+-------------------------
+Issue: "Network module imported" error
+Solution: Remove any imports of requests, urllib, socket, etc. Use only allowed libraries.
+
+Issue: "Signal validation failed"
+Solution: Ensure predict() returns exactly "BUY", "SELL", "HOLD" (uppercase) with same index as input.
+
+Issue: "Model weights not found"
+Solution: Run strategy.fit() first to generate weights file, or check file path.
+
+Issue: "Feature mismatch in ML strategy"
+Solution: Ensure consistent feature engineering between fit() and predict().
+
+Issue: "Index not sorted" error
+Solution: Ensure your data is sorted chronologically before passing to strategies.
+
+PERFORMANCE OPTIMIZATION
+-------------------------
+1. For large datasets, consider sampling for initial development
+2. ML strategy training can be slow - use smaller n_estimators for testing
+3. Feature engineering is vectorized but can be memory intensive
+4. Backtesting is optimized but scales linearly with data size
+
+SUBMISSION PREPARATION
+----------------------
+1. Update team name in all strategy files (replace "teamname")
+2. Fill out README_teamname.md with actual team information
+3. Test final submission with: python -m pytest tests/
+4. Record demonstration video showing:
+   - File structure
+   - No internet imports
+   - Reproducible results
+   - Signal validation
+   - Backtesting results
+
+HACKATHON RULES COMPLIANCE
+---------------------------
+✓ No internet calls (enforced by assert_no_network_imports())
+✓ Only allowed libraries (numpy, pandas, sklearn, statsmodels, matplotlib, torch, tensorflow)
+✓ Correct file naming (strategy_teamname_*.py)
+✓ Strategy class not renamed
+✓ predict() returns correct format
+✓ Random seeds set for reproducibility
+✓ Weights files saved for ML strategies
+
+DEBUGGING CHECKLIST
+--------------------
+If something isn't working:
+1. Check data format and loading
+2. Verify no network imports
+3. Validate signal format
+4. Check file paths are relative
+5. Ensure data is sorted chronologically
+6. Test with smaller dataset first
+7. Check for NaN values in data
+8. Verify strategy class methods exist
+
+ADVANCED USAGE
+--------------
+# Custom backtesting parameters
+from backtest import backtest_minute_sharpe
+results = backtest_minute_sharpe(
+    df=test_df,
+    signals=signals,
+    starting_cash=5_000_000,  # Different starting amount
+    fee=0.002                 # Different fee structure
+)
+
+# Feature importance analysis (ML strategy)
+from strategies.strategy_teamname_ml import Strategy
+strategy = Strategy()
+strategy.fit(train_df)
+if hasattr(strategy.model, 'feature_importances_'):
+    import pandas as pd
+    importance = pd.DataFrame({
+        'feature': strategy.feature_names,
+        'importance': strategy.model.feature_importances_
+    }).sort_values('importance', ascending=False)
+    print(importance.head(10))
+
+# Custom signal analysis
+signals = strategy.predict(test_df)
+signal_changes = signals != signals.shift(1)
+trade_frequency = signal_changes.sum() / len(signals)
+print(f"Trade frequency: {trade_frequency:.3f}")
+
+TROUBLESHOOTING CONTACT
+-----------------------
+If you encounter issues not covered here:
+1. Check the main.ipynb notebook for examples
+2. Review test files for expected behavior
+3. Ensure you're following the exact API requirements
+4. Test with the provided sample data generation code
+
+Remember: The goal is to create strategies that work with the hackathon's exact requirements.
+Focus on robustness and compliance over complex optimization.
+
+Good luck! 🚀
