@@ -11,12 +11,12 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
     """
     Simulate long-only, all-in/all-out trading with minute-level Sharpe calculation.
     
-    Trading Rules:
-    - Signals at time t execute at next bar's open (t+1)
+    Trading Rules (UPDATED):
+    - Signals at time t execute at same bar's close price (Close[t]) - CHANGED FROM Open[t+1]
     - Long-only: can only BUY when in cash, SELL when holding position
     - All-in/all-out: use entire cash balance for trades
     - Fees applied on both sides: reduce cash on BUY, reduce proceeds on SELL
-    - Mark-to-market at each bar's close price
+    - Mark-to-market at each bar's close price (same as execution price now)
     
     Args:
         df: DataFrame with OHLCV data, sorted ascending datetime index
@@ -52,7 +52,6 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
     position = 0  # 0 = cash, 1 = long position
     cash = float(starting_cash)
     shares = 0.0
-    pending_action = None
     
     # Track results
     navs = []
@@ -60,49 +59,43 @@ def backtest_minute_sharpe(df: pd.DataFrame, signals: pd.Series,
     
     for i, timestamp in enumerate(df.index):
         current_bar = df.loc[timestamp]
+        close_price = float(current_bar['close'])  # CHANGED: Get close price first
         
-        # Execute pending action from previous bar's signal at current open
-        if pending_action is not None:
-            action = pending_action
-            open_price = float(current_bar['open'])
-            
-            if action == "BUY" and position == 0:
-                # Buy all-in: apply fee by reducing available cash
-                available_cash = cash * (1 - fee)
-                shares = available_cash / open_price
-                cash = 0.0
-                position = 1
-                trades.append({
-                    'time': timestamp,
-                    'type': 'BUY',
-                    'price': open_price,
-                    'shares': shares,
-                    'fee_paid': cash * fee if cash > 0 else available_cash * fee / (1 - fee)
-                })
-                
-            elif action == "SELL" and position == 1:
-                # Sell all: apply fee by reducing proceeds
-                gross_proceeds = shares * open_price
-                cash = gross_proceeds * (1 - fee)
-                shares = 0.0
-                position = 0
-                trades.append({
-                    'time': timestamp,
-                    'type': 'SELL', 
-                    'price': open_price,
-                    'shares': shares,
-                    'fee_paid': gross_proceeds * fee
-                })
-            
-            pending_action = None
-        
-        # Read current signal for next bar execution
+        # CHANGED: Execute signal immediately at current bar's close price (not next bar's open)
         current_signal = signals.loc[timestamp]
-        if current_signal in ("BUY", "SELL"):
-            pending_action = current_signal
         
-        # Mark-to-market at close
-        close_price = float(current_bar['close'])
+        if current_signal == "BUY" and position == 0:
+            # Buy all-in: apply fee by reducing available cash
+            # CHANGED: Execute at close_price instead of next bar's open_price
+            available_cash = cash * (1 - fee)
+            shares = available_cash / close_price
+            cash = 0.0
+            position = 1
+            trades.append({
+                'time': timestamp,
+                'type': 'BUY',
+                'price': close_price,  # CHANGED: Use close_price
+                'shares': shares,
+                'fee_paid': available_cash * fee / (1 - fee)
+            })
+            
+        elif current_signal == "SELL" and position == 1:
+            # Sell all: apply fee by reducing proceeds
+            # CHANGED: Execute at close_price instead of next bar's open_price
+            gross_proceeds = shares * close_price
+            cash = gross_proceeds * (1 - fee)
+            shares = 0.0
+            position = 0
+            trades.append({
+                'time': timestamp,
+                'type': 'SELL', 
+                'price': close_price,  # CHANGED: Use close_price
+                'shares': shares,
+                'fee_paid': gross_proceeds * fee
+            })
+        
+        # Mark-to-market at close (same as execution price now)
+        # CHANGED: NAV calculation now reflects immediate execution
         nav = cash + shares * close_price
         navs.append(nav)
     
@@ -194,9 +187,10 @@ if __name__ == "__main__":
     }, index=dates)
     
     # Generate simple buy-and-hold signals
+    # CHANGED: Now executes at same bar's close price, so no lookahead concerns
     sample_signals = pd.Series(['BUY'] + ['HOLD'] * (len(dates) - 1), index=dates)
     
-    # Run backtest
+    # Run backtest with updated execution logic
     results = backtest_minute_sharpe(sample_df, sample_signals)
-    print_backtest_summary(results, "Sample Buy-and-Hold")
+    print_backtest_summary(results, "Sample Buy-and-Hold (Close Execution)")
 

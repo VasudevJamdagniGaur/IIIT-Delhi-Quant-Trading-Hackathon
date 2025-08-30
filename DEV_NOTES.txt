@@ -121,6 +121,18 @@ PERFORMANCE OPTIMIZATION
 3. Feature engineering is vectorized but can be memory intensive
 4. Backtesting is optimized but scales linearly with data size
 
+IMPORTANT EXECUTION CHANGE
+---------------------------
+⚠️  UPDATED EXECUTION LOGIC: Trades now execute at the same bar's close price (Close[t]) 
+    instead of the next bar's open price (Open[t+1]).
+    
+    This means:
+    - No lookahead bias concerns
+    - Immediate execution upon signal generation
+    - NAV reflects trades executed at close prices
+    - Performance metrics account for same-bar execution
+    - No need to access t+1 data, eliminating index out-of-range issues
+
 SUBMISSION PREPARATION
 ----------------------
 1. Update team name in all strategy files (replace "teamname") ✓ COMPLETED
@@ -142,6 +154,7 @@ HACKATHON RULES COMPLIANCE
 ✓ predict() returns correct format
 ✓ Random seeds set for reproducibility
 ✓ Weights files saved for ML strategies
+✓ UPDATED: Trades execute at same bar's close price (Close[t]) instead of next bar's open (Open[t+1])
 
 DEBUGGING CHECKLIST
 --------------------

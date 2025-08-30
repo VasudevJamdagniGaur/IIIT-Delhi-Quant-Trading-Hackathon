@@ -85,7 +85,6 @@
 - **All-in/All-out**: Full position sizing on each trade (no partial positions)
 - **Position tracking**: Maintains state to prevent invalid signal sequences
 - **Transaction costs**: 0.1% fee per trade side built into backtesting
-- **UPDATED Execution**: Trades execute at same bar's close price (Close[t]) instead of next bar's open (Open[t+1])
 
 ### Signal Validation:
 - **Format enforcement**: Strict validation of signal format (BUY/SELL/HOLD uppercase only)
@@ -131,13 +130,12 @@
 ### Strategy Limitations:
 - **Long-only**: Cannot profit from downward price movements
 - **Transaction costs**: 0.1% fees may erode profits on high-frequency trading
-- **Slippage**: Backtesting assumes perfect execution at close prices
+- **Slippage**: Backtesting assumes perfect execution at open prices
 
 ### Technical Limitations:
 - **Feature stability**: ML features may become less predictive over time
 - **Model complexity**: RandomForest may still overfit despite regularization
 - **Threshold sensitivity**: Performance sensitive to probability threshold selection
-- **Execution timing**: Trades execute at close prices, which may differ from real-world execution capabilities
 
 ### Implementation Constraints:
 - **No internet**: Cannot access real-time data or external APIs during execution
