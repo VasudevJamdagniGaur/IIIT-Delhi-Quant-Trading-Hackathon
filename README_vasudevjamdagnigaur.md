@@ -150,18 +150,34 @@
 ```bash
 # Install required packages
 pip install -r requirements.txt
+
+# Install testing framework
+pip install pytest
 ```
 
 ### Quick Start:
 1. **Place training data**: Copy your `train.csv` file to the `data/` folder
 2. **Run notebook**: Open and execute `main.ipynb` for complete analysis
-3. **Run tests**: Validate implementation with `python -m pytest tests/`
+3. **Run tests**: Validate implementation with `pytest -q`
+
+### Testing:
+```bash
+# Run all tests quietly
+pytest -q
+
+# Run tests with verbose output
+pytest -v
+
+# Run specific test files
+pytest tests/test_predict_api.py -v
+pytest tests/test_no_internet.py -v
+```
 
 ### Command Line Usage:
 ```python
 # Import strategies
-from strategies.strategy_teamname_baseline import Strategy as BaselineStrategy
-from strategies.strategy_teamname_ml import Strategy as MLStrategy
+from strategies.strategy_vasudevjamdagnigaur_baseline import Strategy as BaselineStrategy
+from strategies.strategy_vasudevjamdagnigaur_ml import Strategy as MLStrategy
 
 # Load your data
 import pandas as pd
